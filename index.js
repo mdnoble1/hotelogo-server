@@ -40,6 +40,32 @@ async function run() {
     const bookingCollection = client.db('hotelogo').collection('bookings');
 
 
+    // middlewares
+        //verify token and grant access
+        const gateman = (req, res, next) => {
+          const { token } = req.cookies
+          //console.log(token);
+
+
+           //if client does not send token
+           if(!token){
+              return res.status(401).send({message:'You are not authorized'})
+          };
+
+
+          // verify a token symmetric
+          jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+            if(err){
+                return res.status(401).send({message:'You are not authorized'})
+            }
+            //console.log(decoded);
+            //attach decoded user so that others can get it
+            req.user = decoded
+            next()
+        });
+    }
+
+
 
 
 
@@ -57,6 +83,25 @@ async function run() {
   });
 
 
+    // user specific bookings
+    app.get('/api/v1/user/bookings',gateman, async (req, res) => {
+           
+    const queryEmail = req.query.email;
+    const tokenEmail = req.user.email
+
+    if(queryEmail !== tokenEmail) {
+        return  res.status(403).send({message:'forbidden access'})
+    }
+    let query ={}
+           if(queryEmail){
+            query.email = queryEmail
+           }
+
+           const result = await bookingCollection.find(query).toArray()
+           res.send(result)
+        });
+
+
     app.delete('/api/v1/user/cancel-booking/:bookingId' , async (req, res) => {
     const id = req.params.bookingId;
     const query = { _id : new ObjectId(id)};
@@ -71,9 +116,9 @@ async function run() {
     const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d' })
     console.log(token);
     res.cookie('token', token, {
-      httponly: true,
+      httpOnly: true,
       secure: false,
-      sameSite: 'none'
+      // sameSite: 'none'
   }).send({ success: true })
 });
 
