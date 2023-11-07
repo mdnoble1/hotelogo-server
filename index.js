@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -32,13 +33,24 @@ async function run() {
 
 
 
+
+
+
     const serviceCollection = client.db('hotelogo').collection('services');
+    const bookingCollection = client.db('hotelogo').collection('bookings');
+
+
+
+
 
     app.get('/api/v1/services', async (req, res) => {
       const cursor = serviceCollection.find()
       const result = await cursor.toArray()
       res.send(result)
   });
+
+
+    
 
 
 
