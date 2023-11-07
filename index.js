@@ -117,8 +117,8 @@ async function run() {
     console.log(token);
     res.cookie('token', token, {
       httpOnly: true,
-      secure: false,
-      // sameSite: 'none'
+      secure: true,
+      sameSite: 'none'
   }).send({ success: true })
 });
 
