@@ -50,7 +50,14 @@ async function run() {
   });
 
 
-    
+  app.post('/api/v1/user/create-booking' , async (req, res) => {
+    const booking = req.body;
+    const result = await bookingCollection.insertOne(booking);
+    res.send(result)
+  });
+
+
+  
 
 
 
