@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser')
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -63,6 +64,9 @@ async function run() {
     const result = await bookingCollection.deleteOne(query);
     res.send(result)
   });
+
+
+    // app.post('/api/v1/auth/access-token')
 
 
 
