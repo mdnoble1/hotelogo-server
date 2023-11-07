@@ -50,14 +50,19 @@ async function run() {
   });
 
 
-  app.post('/api/v1/user/create-booking' , async (req, res) => {
+    app.post('/api/v1/user/create-booking' , async (req, res) => {
     const booking = req.body;
     const result = await bookingCollection.insertOne(booking);
     res.send(result)
   });
 
 
-  
+    app.delete('/api/v1/user/cancel-booking/:bookingId' , async (req, res) => {
+    const id = req.params.bookingId;
+    const query = { _id : new ObjectId(id)};
+    const result = await bookingCollection.deleteOne(query);
+    res.send(result)
+  });
 
 
 
