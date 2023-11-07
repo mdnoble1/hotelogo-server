@@ -7,9 +7,13 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// middle wares
-app.use(cors());
+// parsers
 app.use(express.json());
+app.use(cookieParser())
+app.use(cors({
+    origin:'http://localhost:5173',
+    credentials: true
+}))
 
 
 
@@ -31,11 +35,6 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-
-
-
-
-
 
     const serviceCollection = client.db('hotelogo').collection('services');
     const bookingCollection = client.db('hotelogo').collection('bookings');
@@ -66,7 +65,17 @@ async function run() {
   });
 
 
-    // app.post('/api/v1/auth/access-token')
+    app.post('/api/v1/auth/access-token', (req, res) => {
+    // creating token and send to client
+    const user = req.body
+    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d' })
+    console.log(token);
+    res.cookie('token', token, {
+      httponly: true,
+      secure: false,
+      sameSite: 'none'
+  }).send({ success: true })
+});
 
 
 
