@@ -75,6 +75,13 @@ async function run() {
       res.send(result)
   });
 
+    app.get("/api/v1/services/:serviceId" , async(req , res) => {
+    const id = req.params.serviceId;
+    const query = { _id : new ObjectId(id)};
+    const result = await serviceCollection.findOne(query);
+    res.send(result);
+  });
+
 
     app.post('/api/v1/user/create-booking' , async (req, res) => {
     const booking = req.body;
